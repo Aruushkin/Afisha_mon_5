@@ -10,6 +10,11 @@ class Director(models.Model):
         return self.name
 
 
+@property
+def movies_count(self):
+    return self.movie_set.all().count()
+
+
 class Movie(models.Model):
     title = models.CharField(max_length=100)
     description = models.TextField(null=True, blank=True)
@@ -20,8 +25,14 @@ class Movie(models.Model):
         return self.title
 
 
+@property
+def reviews(self):
+    return self.movie_reviews.filter(stars__gt=3)
+
+
 class Review(models.Model):
     text = models.TextField(null=True, blank=True)
+    stars = models.PositiveIntegerField(default=1, choices=[(i, i) for i in range(1, 6)])
     movie = models.ForeignKey(Movie, on_delete=models.CASCADE)
 
     def __str__(self):
