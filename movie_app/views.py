@@ -1,76 +1,109 @@
-from rest_framework import generics
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-# from django.db.models import Count
+from rest_framework.views import APIView
 
-# from rest_framework import r
-from rest_framework import status
-from movie_app.serializers import DirectorSerializer, MovieSerializer, ReviewSerializer
+from movie_app.serializers import DirectorSerializers, DirectorDetailSerializers, MovieSerializers, \
+    MovieDetailSerializers, ReviewSerializers, ReviewDetailSerializers
 from movie_app.models import Director, Movie, Review
+from rest_framework import status
 
 
 @api_view(['GET'])
 def director_view(request):
     director = Director.objects.all()
-    serializer = DirectorSerializer(director, many=True)
-    return Response(data=serializer.data)
+    serializer = DirectorSerializers(
+        director,
+        many=True
+    )
+    return Response(
+        data=serializer.data
+    )
 
 
 @api_view(['GET'])
-def director_list_api_view(request):
-    director = Director.objects.all()
-    data = DirectorSerializer(instance=director, many=True).data
-    return Response(data=data)
-
-
-@api_view(['GET'])
-def director_detail_api_view(request, director_id):
-    director = Director.objects.get(id=director_id)
-    data = DirectorSerializer(instance=director, many=False).data
-    return Response(data=data)
+def director_list_view(request, id):
+    try:
+        director = Director.objects.get(id=id)
+    except Director.DoesNotExist:
+        return Response(
+            data={'error': 'Director not found'},
+            status=status.HTTP_404_NOT_FOUND
+        )
+    serializer = DirectorDetailSerializers(
+        director,
+        many=False
+    )
+    return Response(
+        data=serializer.data
+    )
 
 
 @api_view(['GET'])
 def movie_view(request):
     movie = Movie.objects.all()
-    serializer = MovieSerializer(movie, many=True)
-    return Response(data=serializer.data)
+    serializer = MovieSerializers(movie, many=True)
+    return Response(
+        data=serializer.data
+    )
 
 
 @api_view(['GET'])
-def movie_list_api_view(request):
-    movie = Movie.objects.all()
-    data = MovieSerializer(instance=movie, many=True).data
-    return Response(data=data)
-
-
-@api_view(['GET'])
-def movie_detail_api_view(request, movie_id):
-    movie = Movie.objects.get(id=movie_id)
-    data = MovieSerializer(instance=movie, many=False).data
-    return Response(data=data)
+def movie_list_view(request, id):
+    try:
+        movie_list = Movie.objects.get(id=id)
+    except Movie.DoesNotExist:
+        return Response(
+            data={'error': 'Movie not found'},
+            status=status.HTTP_404_NOT_FOUND
+        )
+    serializer = MovieDetailSerializers(
+        movie_list,
+        many=False
+    )
+    return Response(
+        data=serializer.data
+    )
 
 
 @api_view(['GET'])
 def review_view(request):
     review = Review.objects.all()
-    serializer = ReviewSerializer(review, many=True)
+    serializer = ReviewSerializer(
+        review,
+        many=True
+    )
+    return Response(
+        data=serializer.data
+    )
+
+
+@api_view(['GET'])
+def review_list_view(request, id):
+    try:
+        review_list = Review.objects.get(id=id)
+    except Review.DoesNotExist:
+        return Response(
+            data={'error': 'Reviews not found'},
+            status=status.HTTP_404_NOT_FOUND
+        )
+    serializer = ReviewDetailSerializers(
+        review_list,
+        many=False)
     return Response(data=serializer.data)
 
 
 @api_view(['GET'])
-def review_list_api_view(request):
-    review = Review.objects.all()
-    data = ReviewSerializer(instance=review, many=True).data
-    return Response(data=data)
+def movies_views(request):
+    movie_list = Movie.objects.all()
+    serializer = MovieSerializers(movie_list, many=True).data
+    return Response(data=serializer)
 
 
 @api_view(['GET'])
-def review_detail_api_view(request, review_id):
-    review = Review.objects.get(id=review_id)
-    data = ReviewSerializer(instance=review, many=False).data
-    return Response(data=data)
-
+def directors_view(request):
+    directors = Director.objects.all()
+    serializer = DirectorSerializers(directors, many=True)
+    return Response(data=serializer.data)
 
 
 
