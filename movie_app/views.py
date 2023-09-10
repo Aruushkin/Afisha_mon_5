@@ -1,115 +1,97 @@
-from rest_framework.decorators import api_view
-from rest_framework.response import Response
 from rest_framework.views import APIView
-
-from movie_app.serializers import DirectorSerializers, DirectorDetailSerializers, MovieSerializers, \
-    MovieDetailSerializers, ReviewSerializers, ReviewDetailSerializers
-from movie_app.models import Director, Movie, Review
+from rest_framework.response import Response
 from rest_framework import status
+from .serializers import DirectorSerializers, DirectorDetailSerializers, MovieSerializers, \
+    MovieDetailSerializers, ReviewSerializers, ReviewDetailSerializers
+from .models import Director, Movie, Review
 
-
-@api_view(['GET'])
-def director_view(request):
-    director = Director.objects.all()
-    serializer = DirectorSerializers(
-        director,
-        many=True
-    )
-    return Response(
-        data=serializer.data
-    )
-
-
-@api_view(['GET'])
-def director_list_view(request, id):
-    try:
-        director = Director.objects.get(id=id)
-    except Director.DoesNotExist:
-        return Response(
-            data={'error': 'Director not found'},
-            status=status.HTTP_404_NOT_FOUND
+class DirectorListView(APIView):
+    def get(self, request):
+        directors = Director.objects.all()
+        serializer = DirectorSerializers(
+            directors,
+            many=True
         )
-    serializer = DirectorDetailSerializers(
-        director,
-        many=False
-    )
-    return Response(
-        data=serializer.data
-    )
-
-
-@api_view(['GET'])
-def movie_view(request):
-    movie = Movie.objects.all()
-    serializer = MovieSerializers(movie, many=True)
-    return Response(
-        data=serializer.data
-    )
-
-
-@api_view(['GET'])
-def movie_list_view(request, id):
-    try:
-        movie_list = Movie.objects.get(id=id)
-    except Movie.DoesNotExist:
         return Response(
-            data={'error': 'Movie not found'},
-            status=status.HTTP_404_NOT_FOUND
+            data=serializer.data
         )
-    serializer = MovieDetailSerializers(
-        movie_list,
-        many=False
-    )
-    return Response(
-        data=serializer.data
-    )
 
-
-@api_view(['GET'])
-def review_view(request):
-    review = Review.objects.all()
-    serializer = ReviewSerializer(
-        review,
-        many=True
-    )
-    return Response(
-        data=serializer.data
-    )
-
-
-@api_view(['GET'])
-def review_list_view(request, id):
-    try:
-        review_list = Review.objects.get(id=id)
-    except Review.DoesNotExist:
+class DirectorDetailView(APIView):
+    def get(self, request, id):
+        try:
+            director = Director.objects.get(id=id)
+        except Director.DoesNotExist:
+            return Response(
+                data={'error': 'Director not found'},
+                status=status.HTTP_404_NOT_FOUND
+            )
+        serializer = DirectorDetailSerializers(
+            director,
+            many=False
+        )
         return Response(
-            data={'error': 'Reviews not found'},
-            status=status.HTTP_404_NOT_FOUND
+            data=serializer.data
         )
-    serializer = ReviewDetailSerializers(
-        review_list,
-        many=False)
-    return Response(data=serializer.data)
 
+class MovieListView(APIView):
+    def get(self, request):
+        movies = Movie.objects.all()
+        serializer = MovieSerializers(movies, many=True)
+        return Response(
+            data=serializer.data
+        )
 
-@api_view(['GET'])
-def movies_views(request):
-    movie_list = Movie.objects.all()
-    serializer = MovieSerializers(movie_list, many=True).data
-    return Response(data=serializer)
+class MovieDetailView(APIView):
+    def get(self, request, id):
+        try:
+            movie = Movie.objects.get(id=id)
+        except Movie.DoesNotExist:
+            return Response(
+                data={'error': 'Movie not found'},
+                status=status.HTTP_404_NOT_FOUND
+            )
+        serializer = MovieDetailSerializers(
+            movie,
+            many=False
+        )
+        return Response(
+            data=serializer.data
+        )
 
+class ReviewListView(APIView):
+    def get(self, request):
+        reviews = Review.objects.all()
+        serializer = ReviewSerializers(
+            reviews,
+            many=True
+        )
+        return Response(
+            data=serializer.data
+        )
 
-@api_view(['GET'])
-def directors_view(request):
-    directors = Director.objects.all()
-    serializer = DirectorSerializers(directors, many=True)
-    return Response(data=serializer.data)
+class ReviewDetailView(APIView):
+    def get(self, request, id):
+        try:
+            review = Review.objects.get(id=id)
+        except Review.DoesNotExist:
+            return Response(
+                data={'error': 'Review not found'},
+                status=status.HTTP_404_NOT_FOUND
+            )
+        serializer = ReviewDetailSerializers(
+            review,
+            many=False
+        )
+        return Response(data=serializer.data)
 
+class MoviesView(APIView):
+    def get(self, request):
+        movie_list = Movie.objects.all()
+        serializer = MovieSerializers(movie_list, many=True).data
+        return Response(data=serializer)
 
-
-
-
-
-
-
-
+class DirectorsView(APIView):
+    def get(self, request):
+        directors = Director.objects.all()
+        serializer = DirectorSerializers(directors, many=True)
+        return Response(data=serializer.data)
