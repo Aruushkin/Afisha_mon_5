@@ -6,7 +6,7 @@ from rest_framework import status
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
 from .serializers import UserCreateSerializer
-from .models import UserProfile  # Предполагается, что у вас есть модель UserProfile
+from .models import UserProfile
 
 class RegistrationAPIView(APIView):
     def post(self, request):
